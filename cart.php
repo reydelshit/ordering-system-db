@@ -19,7 +19,7 @@ switch ($method) {
 
         if (isset($_GET['product_id'])) {
             $product_id_user = $_GET['product_id'];
-            $sql = "SELECT * FROM cart WHERE product_id = :product_id";
+            $sql = "SELECT * FROM cart WHERE product_id = :product_id AND user_id = :user_id";
         }
 
 
@@ -36,6 +36,7 @@ switch ($method) {
 
             if (isset($product_id_user)) {
                 $stmt->bindParam(':product_id', $product_id_user);
+                $stmt->bindParam(':user_id', $user_id_specific_user);
             }
 
             $stmt->execute();
