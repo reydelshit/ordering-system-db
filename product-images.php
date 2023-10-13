@@ -10,52 +10,38 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case "GET":
 
-        if (isset($_GET['user_id'])) {
-            $user_id_specific_user = $_GET['user_id'];
-            $sql = "SELECT * FROM water WHERE user_id = :user_id";
-        }
 
         if (isset($_GET['product_id'])) {
-            $product_specific_user = $_GET['product_id'];
-            $sql = "SELECT * FROM product WHERE product_id = :product_id";
-        }
+            $product_specific_images = $_GET['product_id'];
 
-        if (!isset($_GET['user_id']) && !isset($_GET['product_id'])) {
-            $sql = "SELECT * FROM product ORDER BY product_id DESC";
-        }
+            $sql2 = " SELECT * FROM product_images WHERE product_id = :product_id";
 
 
-        if (isset($sql)) {
-            $stmt = $conn->prepare($sql);
+            $stmt = $conn->prepare($sql2);
 
-            if (isset($user_id_specific_user)) {
-                $stmt->bindParam(':user_id', $user_id_specific_user);
-            }
-
-            if (isset($product_specific_user)) {
-                $stmt->bindParam(':product_id', $product_specific_user);
+            if (isset($product_specific_images)) {
+                $stmt->bindParam(':product_id', $product_specific_images);
             }
 
             $stmt->execute();
-            $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $product_images = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            echo json_encode($product);
+            echo json_encode($product_images);
         }
+
 
 
         break;
 
     case "POST":
         $product = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO product (product_id, product_name, product_price, quantity, product_image, product_description) VALUES (NULL, :product_name, :product_price, :quantity, :product_image, :product_description)";
+        $sql = "INSERT INTO product (product_id, product_name, product_price, quantity, product_image) VALUES (NULL, :product_name, :product_price, :quantity, :product_image)";
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':product_name', $product->product_name);
         $stmt->bindParam(':product_price', $product->product_price);
         $stmt->bindParam(':quantity', $product->quantity);
         $stmt->bindParam(':product_image',  $product->product_image);
-        $stmt->bindParam(':product_description',  $product->product_description);
-
 
 
         $productInserted = $stmt->execute();
