@@ -9,35 +9,52 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case "GET":
-        $sql = "SELECT * FROM users";
-        $path = explode('/', $_SERVER['REQUEST_URI']);
-        if (isset($path[3]) && is_numeric($path[3])) {
-            $sql .= " WHERE id = :id";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':id', $path[3]);
-            $stmt->execute();
-            $users = $stmt->fetch(PDO::FETCH_ASSOC);
-            // if ($users && isset($users['image'])) {
-            //     $users['image'] = base64_encode($users['image']);
-            // }
-        } else {
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (isset($_GET['user_id'])) {
+            $user_id_specific_user = $_GET['user_id'];
+            $sql = "SELECT * FROM users WHERE user_id = :user_id";
         }
 
-        echo json_encode($users);
+        if (isset($_GET['product_id'])) {
+            $product_specific_user = $_GET['product_id'];
+            $sql = "SELECT * FROM product WHERE product_id = :product_id";
+        }
+
+        if (!isset($_GET['user_id']) && !isset($_GET['product_id'])) {
+            $sql = "SELECT * FROM product ORDER BY product_id DESC";
+        }
+
+
+        if (isset($sql)) {
+            $stmt = $conn->prepare($sql);
+
+            if (isset($user_id_specific_user)) {
+                $stmt->bindParam(':user_id', $user_id_specific_user);
+            }
+
+            if (isset($product_specific_user)) {
+                $stmt->bindParam(':product_id', $product_specific_user);
+            }
+
+            $stmt->execute();
+            $product = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode($product);
+        }
+
+
         break;
 
     case "POST":
         $user = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO users (user_id, name, email, password, gender, created_at) VALUES (null, :name, :email, :password, :gender, :created_at)";
+        $sql = "INSERT INTO users (user_id, name, email, password, gender, address, created_at) VALUES (null, :name, :email, :password, :gender, :address, :created_at)";
         $stmt = $conn->prepare($sql);
         $created_at = date('Y-m-d');
         $stmt->bindParam(':name', $user->name);
         $stmt->bindParam(':email', $user->email);
         $stmt->bindParam(':password', $user->password);
         $stmt->bindParam(':gender', $user->gender);
+        $stmt->bindParam(':address', $user->address);
         $stmt->bindParam(':created_at', $created_at);
 
         if ($stmt->execute()) {

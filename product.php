@@ -47,7 +47,7 @@ switch ($method) {
 
     case "POST":
         $product = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO product (product_id, product_name, product_price, quantity, product_image, product_description) VALUES (NULL, :product_name, :product_price, :quantity, :product_image, :product_description)";
+        $sql = "INSERT INTO product (product_id, product_name, product_price, quantity, product_image, product_description, tags) VALUES (NULL, :product_name, :product_price, :quantity, :product_image, :product_description, :tags)";
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':product_name', $product->product_name);
@@ -55,6 +55,7 @@ switch ($method) {
         $stmt->bindParam(':quantity', $product->quantity);
         $stmt->bindParam(':product_image',  $product->product_image);
         $stmt->bindParam(':product_description',  $product->product_description);
+        $stmt->bindParam(':tags',  $product->tags);
 
 
 
