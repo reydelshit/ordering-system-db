@@ -10,41 +10,81 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case "GET":
 
+        if (isset($_GET['user_id'])) {
+            $user_id_specific_user = $_GET['user_id'];
+            $sql = "SELECT product.product_name, product.product_price, product.product_image, order_products.quantity FROM product LEFT JOIN order_products ON product.product_id = order_products.product_id WHERE order_products.user_id = :user_id";
+        }
 
         if (isset($_GET['product_id'])) {
-            $product_specific_images = $_GET['product_id'];
-
-            $sql2 = " SELECT * FROM product_images WHERE product_id = :product_id";
-
-
-            $stmt = $conn->prepare($sql2);
-
-            if (isset($product_specific_images)) {
-                $stmt->bindParam(':product_id', $product_specific_images);
-            }
-
-            $stmt->execute();
-            $product_images = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            echo json_encode($product_images);
+            $product_id_user = $_GET['product_id'];
+            $sql = "SELECT * FROM cart WHERE product_id = :product_id AND user_id = :user_id";
         }
 
 
+        if (!isset($_GET['user_id']) && !isset($_GET['product_id'])) {
+            $sql = "SELECT * FROM product ORDER BY product_id DESC";
+        }
 
+        if (isset($sql)) {
+            $stmt = $conn->prepare($sql);
+
+            if (isset($user_id_specific_user)) {
+                $stmt->bindParam(':user_id', $user_id_specific_user);
+            }
+
+            if (isset($product_id_user)) {
+                $stmt->bindParam(':product_id', $product_id_user);
+                $stmt->bindParam(':user_id', $user_id_specific_user);
+            }
+
+            $stmt->execute();
+            $sleep = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode($sleep);
+        }
         break;
 
     case "POST":
         $orders = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO order (order_id, user_id, order_date, total_amount, payment_type) VALUES (NULL, user_id, order_date, total_amount, payment_type)";
+        $sql = "INSERT INTO orders (user_id, order_date, total_amount, payment_type) VALUES (:user_id, :order_date, :total_amount, :payment_type)";
         $stmt = $conn->prepare($sql);
         $order_date = date('Y-m-d');
+
         $stmt->bindParam(':user_id', $orders->user_id);
-        $stmt->bindParam(':product_price', $orders->product_price);
-        $stmt->bindParam(':order_date', $orders->order_date);
+        $stmt->bindParam(':order_date', $order_date);
         $stmt->bindParam(':total_amount',  $orders->total_amount);
         $stmt->bindParam(':payment_type',  $orders->payment_type);
 
         if ($stmt->execute()) {
+            $order_id = $conn->lastInsertId();
+
+            foreach ($orders->products as $product) {
+                $sql = "INSERT INTO order_products (order_id, product_id, quantity, user_id) VALUES (:order_id, :product_id, :quantity, :user_id)";
+                $stmt = $conn->prepare($sql);
+
+                $stmt->bindParam(':order_id', $order_id);
+                $stmt->bindParam(':product_id', $product->product_id);
+                $stmt->bindParam(':quantity', $product->qty);
+                $stmt->bindParam(':user_id', $orders->user_id);
+
+                if ($stmt->execute()) {
+                    $sql2 = "UPDATE product SET quantity = quantity - :quantity WHERE product_id = :product_id";
+                    $stmt2 = $conn->prepare($sql2);
+
+                    $stmt2->bindParam(':quantity', $product->qty);
+                    $stmt2->bindParam(':product_id', $product->product_id);
+
+
+                    $stmt2->execute();
+
+                    $sql3 = "UPDATE cart SET isPaid = 1 WHERE product_id = :product_id";
+                    $stmt3 = $conn->prepare($sql3);
+                    $stmt3->bindParam(':product_id', $product->product_id);
+
+
+                    $stmt3->execute();
+                }
+            }
             $response = [
                 "status" => "success",
                 "message" => "User added order successfully"

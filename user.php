@@ -74,18 +74,16 @@ switch ($method) {
 
     case "PUT":
         $user = json_decode(file_get_contents('php://input'));
-        $sql = "UPDATE users SET name= :name, email=:email, birthday=:birthday, image=:image, gender=:gender, updated_at=:updated_at WHERE id = :id";
+        $sql = "UPDATE users SET name= :name, email=:email, gender=:gender, profile_picture=:profile_picture, address=:address, profile_description=:profile_description, updated_at=:updated_at WHERE user_id = :user_id";
         $stmt = $conn->prepare($sql);
         $updated_at = date('Y-m-d');
-        $stmt->bindParam(':id', $user->id);
+        $stmt->bindParam(':user_id', $user->user_id);
         $stmt->bindParam(':name', $user->name);
         $stmt->bindParam(':email', $user->email);
-        $stmt->bindParam(':birthday', $user->birthday);
-        $stmt->bindParam(':image', $user->image);
+        $stmt->bindParam(':profile_picture', $user->profile_picture);
+        $stmt->bindParam(':address', $user->address);
         $stmt->bindParam(':gender', $user->gender);
-
-        // $stmt->bindParam(':height', $user->height);
-        // $stmt->bindParam(':weight', $user->weight);
+        $stmt->bindParam(':profile_description', $user->profile_description);
         $stmt->bindParam(':updated_at', $updated_at);
 
         if ($stmt->execute()) {

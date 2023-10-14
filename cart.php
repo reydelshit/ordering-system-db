@@ -12,9 +12,9 @@ switch ($method) {
 
         if (isset($_GET['user_id'])) {
             $user_id_specific_user = $_GET['user_id'];
-            $sql = "SELECT cart.cart_id, product.product_price, product.product_image, product.product_name, cart.qty FROM 
+            $sql = "SELECT cart.cart_id, product.product_id, product.product_price, product.product_image, product.product_name, cart.qty FROM 
             ((cart LEFT JOIN product ON cart.product_id = product.product_id) 
-            LEFT JOIN users ON cart.user_id = users.user_id) WHERE cart.user_id = :user_id";
+            LEFT JOIN users ON cart.user_id = users.user_id) WHERE (cart.user_id = :user_id AND isPaid = 0)";
         }
 
         if (isset($_GET['product_id'])) {
