@@ -19,7 +19,7 @@ switch ($method) {
 
         if (isset($_GET['product_id'])) {
             $product_id_user = $_GET['product_id'];
-            $sql = "SELECT * FROM cart WHERE product_id = :product_id AND user_id = :user_id";
+            $sql = "SELECT * FROM cart WHERE product_id = :product_id AND user_id = :user_id AND isPaid = 0";
         }
 
 

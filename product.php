@@ -22,6 +22,10 @@ switch ($method) {
 
         if (!isset($_GET['user_id']) && !isset($_GET['product_id'])) {
             $sql = "SELECT * FROM product ORDER BY product_id DESC";
+            // $sql = "SELECT p.*, f.feedback_rating
+            // FROM product p
+            // LEFT JOIN feedback f ON p.product_id = f.product_id
+            // ORDER BY p.product_id DESC";
         }
 
 
@@ -47,7 +51,7 @@ switch ($method) {
 
     case "POST":
         $product = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO product (product_id, product_name, product_price, quantity, product_image, product_description, tags) VALUES (NULL, :product_name, :product_price, :quantity, :product_image, :product_description, :tags)";
+        $sql = "INSERT INTO product (product_id, product_name, product_price, quantity, product_image, product_description, tags, product_category) VALUES (NULL, :product_name, :product_price, :quantity, :product_image, :product_description, :tags, :product_category)";
         $stmt = $conn->prepare($sql);
 
         $stmt->bindParam(':product_name', $product->product_name);
@@ -56,7 +60,7 @@ switch ($method) {
         $stmt->bindParam(':product_image',  $product->product_image);
         $stmt->bindParam(':product_description',  $product->product_description);
         $stmt->bindParam(':tags',  $product->tags);
-
+        $stmt->bindParam(':product_category',  $product->product_category);
 
 
         $productInserted = $stmt->execute();
