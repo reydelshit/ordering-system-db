@@ -12,12 +12,19 @@ switch ($method) {
 
         if (isset($_GET['user_id'])) {
             $user_id_specific_user = $_GET['user_id'];
-            $sql = "SELECT product.product_name, product.product_price, product.product_image, order_products.quantity FROM product LEFT JOIN order_products ON product.product_id = order_products.product_id WHERE order_products.user_id = :user_id";
+            $sql = "SELECT product.product_name, product.product_price, product.product_image, order_products.quantity, order_status.status, order_products.product_id, orders.order_id FROM 
+                    product LEFT JOIN order_products ON product.product_id = order_products.product_id 
+                    LEFT JOIN order_status ON order_products.order_id = order_status.order_id LEFT JOIN orders ON order_status.order_id = orders.order_id WHERE order_products.user_id = :user_id";
         }
 
         if (isset($_GET['product_id'])) {
             $product_id_user = $_GET['product_id'];
             $sql = "SELECT * FROM cart WHERE product_id = :product_id AND user_id = :user_id";
+        }
+
+        if (isset($_GET['order_id'])) {
+            $order_id = $_GET['order_id'];
+            $sql = "SELECT * FROM order_products WHERE order_id = :order_id AND user_id = :user_id";
         }
 
 
@@ -34,6 +41,11 @@ switch ($method) {
 
             if (isset($product_id_user)) {
                 $stmt->bindParam(':product_id', $product_id_user);
+                $stmt->bindParam(':user_id', $user_id_specific_user);
+            }
+
+            if (isset($order_id)) {
+                $stmt->bindParam(':order_id', $order_id);
                 $stmt->bindParam(':user_id', $user_id_specific_user);
             }
 
@@ -83,6 +95,14 @@ switch ($method) {
 
 
                     $stmt3->execute();
+
+                    $sql4 = "INSERT INTO order_status (order_id, status) VALUES (:order_id, :status)";
+                    $stmt4 = $conn->prepare($sql4);
+                    $status = 'Pending';
+                    $stmt4->bindParam(':order_id', $order_id);
+                    $stmt4->bindParam(':status', $status);
+
+                    $stmt4->execute();
                 }
             }
             $response = [
