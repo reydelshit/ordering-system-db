@@ -24,7 +24,7 @@ switch ($method) {
 
         if (isset($_GET['order_id'])) {
             $order_id = $_GET['order_id'];
-            $sql = "SELECT * FROM order_products WHERE order_id = :order_id AND user_id = :user_id";
+            $sql = "SELECT * FROM order_products WHERE product_id = :product_id AND order_id = :order_id AND user_id = :user_id";
         }
 
 
