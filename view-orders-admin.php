@@ -10,55 +10,32 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case "GET":
 
-        if (isset($_GET['user_id'])) {
-            $user_id_specific_user = $_GET['user_id'];
+        if (isset($_GET['order_id'])) {
+            $order_id = $_GET['order_id'];
 
-            $sql = "SELECT product.product_name, product.product_price, product.product_image, order_products.quantity, order_status.status, order_products.product_id, orders.order_id
+            $sql = "SELECT order_products.order_id, product.product_name, product.product_price, product.product_image, order_products.quantity, order_status.status, order_products.product_id, orders.order_id
             FROM product
             LEFT JOIN order_products ON product.product_id = order_products.product_id
             LEFT JOIN order_status ON order_products.order_id = order_status.order_id
             LEFT JOIN orders ON order_status.order_id = orders.order_id
-            WHERE order_products.user_id = :user_id
+            WHERE order_products.order_id = :order_id
             GROUP BY product.product_id
             ORDER BY orders.order_id ASC";
         }
 
-        if (isset($_GET['product_id'])) {
-            $product_id_user = $_GET['product_id'];
-            $sql = "SELECT * FROM cart WHERE product_id = :product_id AND user_id = :user_id";
-        }
-
-        if (isset($_GET['order_id'])) {
-            $order_id = $_GET['order_id'];
-            $sql = "SELECT * FROM order_products WHERE product_id = :product_id AND order_id = :order_id AND user_id = :user_id";
-        }
-
-
-        if (!isset($_GET['user_id']) && !isset($_GET['product_id'])) {
-            $sql = "SELECT * FROM product ORDER BY product_id DESC";
-        }
 
         if (isset($sql)) {
             $stmt = $conn->prepare($sql);
 
-            if (isset($user_id_specific_user)) {
-                $stmt->bindParam(':user_id', $user_id_specific_user);
-            }
-
-            if (isset($product_id_user)) {
-                $stmt->bindParam(':product_id', $product_id_user);
-                $stmt->bindParam(':user_id', $user_id_specific_user);
-            }
-
             if (isset($order_id)) {
                 $stmt->bindParam(':order_id', $order_id);
-                $stmt->bindParam(':user_id', $user_id_specific_user);
             }
 
-            $stmt->execute();
-            $sleep = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            echo json_encode($sleep);
+            $stmt->execute();
+            $order = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            echo json_encode($order);
         }
         break;
 
