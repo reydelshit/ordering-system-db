@@ -109,6 +109,21 @@ switch ($method) {
                     $stmt4->bindParam(':status', $status);
 
                     $stmt4->execute();
+
+                    $stmt5 = "INSERT INTO order_details (order_id, delivery_address, name, email, phone, payment_type, user_id) 
+                                VALUES (:order_id, :delivery_address, :name, :email, :phone, :payment_type, :user_id)";
+
+                    $stmt5 = $conn->prepare($stmt5);
+
+                    $stmt5->bindParam(':order_id', $order_id);
+                    $stmt5->bindParam(':delivery_address', $orders->delivery_address);
+                    $stmt5->bindParam(':name', $orders->name);
+                    $stmt5->bindParam(':email', $orders->email);
+                    $stmt5->bindParam(':phone', $orders->phone);
+                    $stmt5->bindParam(':payment_type', $orders->payment_type);
+                    $stmt5->bindParam(':user_id', $orders->user_id);
+
+                    $stmt5->execute();
                 }
             }
             $response = [
