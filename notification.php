@@ -12,11 +12,7 @@ switch ($method) {
 
         if (isset($_GET['receiver_id'])) {
             $receiver_id = $_GET['receiver_id'];
-            $sql = "SELECT * FROM messages WHERE receiver_id = :receiver_id";
-        }
-
-        if (!isset($_GET['receiver_id'])) {
-            $sql = "SELECT * FROM messages ORDER BY message_id DESC";
+            $sql = "SELECT * FROM notification_message WHERE receiver_id = :receiver_id ORDER BY message_id DESC";
         }
 
         if (isset($sql)) {
@@ -29,6 +25,7 @@ switch ($method) {
             $stmt->execute();
             $notification = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
             echo json_encode($notification);
         }
 
@@ -37,7 +34,7 @@ switch ($method) {
 
     case "POST":
         $message = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO messages (sender_id, receiver_id, message, created_at) VALUES (:sender_id, :receiver_id, :message, :created_at)";
+        $sql = "INSERT INTO notification_message (sender_id, receiver_id, message, created_at) VALUES (:sender_id, :receiver_id, :message, :created_at)";
         $stmt = $conn->prepare($sql);
         $created_at = date('Y-m-d');
         $stmt->bindParam(':sender_id', $message->sender_id);

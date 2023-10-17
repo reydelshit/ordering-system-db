@@ -64,7 +64,7 @@ switch ($method) {
 
     case "POST":
         $orders = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO orders (user_id, order_date, total_amount, payment_type) VALUES (:user_id, :order_date, :total_amount, :payment_type)";
+        $sql = "INSERT INTO orders (user_id, order_date, total_amount, payment_type, created_at) VALUES (:user_id, :order_date, :total_amount, :payment_type, :created_at)";
         $stmt = $conn->prepare($sql);
         $order_date = date('Y-m-d');
 
@@ -72,6 +72,8 @@ switch ($method) {
         $stmt->bindParam(':order_date', $order_date);
         $stmt->bindParam(':total_amount',  $orders->total_amount);
         $stmt->bindParam(':payment_type',  $orders->payment_type);
+        $created_at = date('Y-m-d');
+        $stmt->bindParam(':created_at', $created_at);
 
         if ($stmt->execute()) {
             $order_id = $conn->lastInsertId();
