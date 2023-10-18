@@ -12,7 +12,8 @@ switch ($method) {
 
         if (isset($_GET['product_id'])) {
             $product_specific_user = $_GET['product_id'];
-            $sql = "SELECT product.product_name, feedback.feedback_description, feedback.created_at, feedback.feedback_rating, users.name, users.profile_picture
+            $sql = "SELECT product.product_name, feedback.feedback_description, feedback.created_at, feedback.feedback_rating, 
+            users.name, users.profile_picture, users.user_id, feedback.feedback_id
             FROM product
             LEFT JOIN feedback ON product.product_id = feedback.product_id
             LEFT JOIN users ON feedback.user_id = users.user_id
