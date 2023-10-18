@@ -15,8 +15,6 @@ switch ($method) {
             $sql = "SELECT * FROM `order_details` WHERE order_details.order_id = :order_id";
         }
 
-
-
         if (isset($sql)) {
             $stmt = $conn->prepare($sql);
 

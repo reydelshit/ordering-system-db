@@ -12,11 +12,12 @@ switch ($method) {
     case "PUT":
         $order_status = json_decode(file_get_contents('php://input'));
 
-        $sql = "UPDATE order_status SET status=:status WHERE status_id=:status_id";
+        $sql = "UPDATE order_status SET status=:status WHERE order_id=:order_id";
         $stmt = $conn->prepare($sql);
         $updated_at = date('Y-m-d');
         $stmt->bindParam(':status', $order_status->status);
-        $stmt->bindParam(':status_id', $order_status->status_id);
+        $stmt->bindParam(':order_id', $order_status->order_id);
+
 
 
         if ($stmt->execute()) {
