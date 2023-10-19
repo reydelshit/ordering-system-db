@@ -16,7 +16,7 @@ switch ($method) {
                 "message" => "Product ID not provided in the request."
             ];
         } else {
-            // Retrieve product information
+
             $product_id = $_GET['product_id'];
             $sql = "SELECT * FROM product WHERE product_id = :product_id";
             $stmt = $conn->prepare($sql);
@@ -25,13 +25,12 @@ switch ($method) {
             $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($product) {
-                $sqlImages = "SELECT image_id, images_data FROM product_images WHERE product_id = :product_id";
+                $sqlImages = "SELECT image_id, images_data, product_id FROM product_images WHERE product_id = :product_id";
                 $stmtImages = $conn->prepare($sqlImages);
                 $stmtImages->bindParam(':product_id', $product_id);
                 $stmtImages->execute();
                 $images = $stmtImages->fetchAll(PDO::FETCH_ASSOC);
 
-                // Combine product and image data
                 $product["images_data"] = $images;
 
                 $response = [
