@@ -22,10 +22,6 @@ switch ($method) {
 
         if (!isset($_GET['user_id']) && !isset($_GET['product_id'])) {
             $sql = "SELECT * FROM product ORDER BY product_id DESC";
-            // $sql = "SELECT p.*, f.feedback_rating
-            // FROM product p
-            // LEFT JOIN feedback f ON p.product_id = f.product_id
-            // ORDER BY p.product_id DESC";
         }
 
 

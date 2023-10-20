@@ -13,14 +13,14 @@ switch ($method) {
         if (isset($_GET['user_id'])) {
             $user_id_specific_user = $_GET['user_id'];
 
-            $sql = "SELECT product.product_name, product.product_price, product.product_image, order_products.quantity, order_status.status, order_products.product_id, orders.order_id
+            $sql = "SELECT product.product_name, product.product_price, product.product_image, order_products.quantity, order_status.status, order_products.product_id, orders.order_id, orders.created_at
             FROM product
             LEFT JOIN order_products ON product.product_id = order_products.product_id
             LEFT JOIN order_status ON order_products.order_id = order_status.order_id
             LEFT JOIN orders ON order_status.order_id = orders.order_id
             WHERE order_products.user_id = :user_id
-            GROUP BY product.product_id
-            ORDER BY orders.order_id ASC";
+            GROUP BY order_products.product_id, orders.order_id
+            ORDER BY orders.order_id DESC";
         }
 
         if (isset($_GET['product_id'])) {
@@ -64,15 +64,13 @@ switch ($method) {
 
     case "POST":
         $orders = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO orders (user_id, order_date, total_amount, payment_type, created_at) VALUES (:user_id, :order_date, :total_amount, :payment_type, :created_at)";
+        $sql = "INSERT INTO orders (user_id, total_amount, payment_type, created_at) VALUES (:user_id, :total_amount, :payment_type, :created_at)";
         $stmt = $conn->prepare($sql);
-        $order_date = date('Y-m-d');
+        $created_at = date('Y-m-d H:i:s');
 
         $stmt->bindParam(':user_id', $orders->user_id);
-        $stmt->bindParam(':order_date', $order_date);
         $stmt->bindParam(':total_amount',  $orders->total_amount);
         $stmt->bindParam(':payment_type',  $orders->payment_type);
-        $created_at = date('Y-m-d');
         $stmt->bindParam(':created_at', $created_at);
 
         if ($stmt->execute()) {

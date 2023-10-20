@@ -27,10 +27,10 @@ switch ($method) {
         $productInserted = $stmt->execute();
 
 
-        $lastProductId = $conn->lastInsertId(); // Get the last inserted product_id
+        $lastProductId = $conn->lastInsertId();
 
         foreach ($product->images_data as $image_data) {
-            // Insert the image into the 'product_images' table
+
             $sqlImages = "INSERT INTO product_images (product_id, images_data) VALUES (:product_id, :images_data)";
             $stmtImages = $conn->prepare($sqlImages);
 

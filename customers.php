@@ -14,6 +14,7 @@ switch ($method) {
         $sql = "SELECT users.user_id, users.name, users.email, users.address, COUNT(orders.user_id) AS orders_count, COUNT(DISTINCT feedback.feedback_id) AS feedback_count
         FROM users INNER JOIN orders ON orders.user_id = users.user_id
         INNER JOIN feedback ON feedback.user_id = users.user_id
+        WHERE users.user_type = 'user'
         GROUP BY users.user_id";
 
 

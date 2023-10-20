@@ -15,13 +15,8 @@ switch ($method) {
             $sql = "SELECT * FROM users WHERE user_id = :user_id";
         }
 
-        if (isset($_GET['product_id'])) {
-            $product_specific_user = $_GET['product_id'];
-            $sql = "SELECT * FROM product WHERE product_id = :product_id";
-        }
-
         if (!isset($_GET['user_id']) && !isset($_GET['product_id'])) {
-            $sql = "SELECT * FROM product ORDER BY product_id DESC";
+            $sql = "SELECT * FROM users WHERE user_type = 'user' ORDER BY user_id DESC";
         }
 
 
@@ -30,10 +25,6 @@ switch ($method) {
 
             if (isset($user_id_specific_user)) {
                 $stmt->bindParam(':user_id', $user_id_specific_user);
-            }
-
-            if (isset($product_specific_user)) {
-                $stmt->bindParam(':product_id', $product_specific_user);
             }
 
             $stmt->execute();

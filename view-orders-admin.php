@@ -13,7 +13,7 @@ switch ($method) {
         if (isset($_GET['order_id'])) {
             $order_id = $_GET['order_id'];
 
-            $sql = "SELECT order_products.user_id, order_products.order_id, product.product_name, product.product_price, product.product_image, order_products.quantity, order_status.status, order_status.status_id, order_products.product_id, orders.order_id
+            $sql = "SELECT orders.created_at, order_products.user_id, order_products.order_id, product.product_name, product.product_price, product.product_image, order_products.quantity, order_status.status, order_status.status_id, order_products.product_id, orders.order_id
             FROM product
             LEFT JOIN order_products ON product.product_id = order_products.product_id
             LEFT JOIN order_status ON order_products.order_id = order_status.order_id
