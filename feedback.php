@@ -12,7 +12,7 @@ switch ($method) {
 
         if (isset($_GET['user_id'])) {
             $user_id_specific_user = $_GET['user_id'];
-            $sql = "SELECT * FROM users WHERE user_id = :user_id";
+            $sql = "SELECT * FROM feedback WHERE user_id = :user_id";
         }
 
         if (isset($_GET['product_id'])) {
@@ -20,9 +20,7 @@ switch ($method) {
             $sql = "SELECT feedback.feedback_id, feedback.feedback_description, feedback.feedback_rating, feedback.feedback_date, users.user_id, users.name, users.email, users.profile_picture FROM feedback LEFT JOIN users ON feedback.user_id = users.user_id  WHERE product_id = :product_id";
         }
 
-        if (!isset($_GET['user_id']) && !isset($_GET['product_id'])) {
-            $sql = "SELECT * FROM product ORDER BY product_id DESC";
-        }
+
 
 
         if (isset($sql)) {
