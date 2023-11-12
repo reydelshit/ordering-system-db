@@ -12,7 +12,7 @@ switch ($method) {
 
         if (isset($_GET['order_id'])) {
             $order_id = $_GET['order_id'];
-            $sql = "SELECT * FROM `order_details` WHERE order_details.order_id = :order_id";
+            $sql = "SELECT * FROM order_details WHERE order_details.order_id = :order_id";
         }
 
         if (isset($sql)) {

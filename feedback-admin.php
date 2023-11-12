@@ -21,7 +21,7 @@ switch ($method) {
         }
 
         if (!isset($_GET['product_id'])) {
-            $sql = "SELECT product.product_id, feedback.feedback_id, product.product_name, COUNT(feedback.feedback_id) AS total_feedback
+            $sql = "SELECT product.product_image, product.product_id, feedback.feedback_id, product.product_name, COUNT(feedback.feedback_id) AS total_feedback
             FROM product
             LEFT JOIN feedback ON product.product_id = feedback.product_id
             GROUP BY product.product_name";

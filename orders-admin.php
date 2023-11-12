@@ -27,7 +27,8 @@ switch ($method) {
             orders.user_id,
             order_status.status,
             order_status.status_id,
-            product_names.product_names
+            product_names.product_names,
+            orders.created_at
             FROM orders
             INNER JOIN order_products ON order_products.order_id = orders.order_id
             INNER JOIN order_status ON order_status.order_id = orders.order_id
