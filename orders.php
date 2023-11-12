@@ -76,6 +76,27 @@ switch ($method) {
         if ($stmt->execute()) {
             $order_id = $conn->lastInsertId();
 
+            $sql7 = "SELECT user_id FROM users WHERE user_type = 'admin'";
+            $stmt7 = $conn->prepare($sql7);
+            $stmt7->execute();
+            $adminUsers = $stmt7->fetchAll(PDO::FETCH_ASSOC);
+
+            // Assuming $orders is an object with user_id property
+            $created_at = date('Y-m-d H:i:s');
+            $orderMessage = 'There is a new order, with order id: ' . $order_id . ' and total amount: ' . $orders->total_amount . ' and payment type: ' . $orders->payment_type;
+
+            foreach ($adminUsers as $adminUser) {
+                $sql6 = "INSERT INTO notification_message (sender_id, receiver_id, message, created_at) VALUES (:sender_id, :receiver_id, :message, :created_at)";
+                $stmt6 = $conn->prepare($sql6);
+
+                $stmt6->bindParam(':sender_id', $orders->user_id);
+                $stmt6->bindParam(':receiver_id', $adminUser['user_id']);
+                $stmt6->bindParam(':message', $orderMessage);
+                $stmt6->bindParam(':created_at', $created_at);
+
+                $stmt6->execute();
+            }
+
             foreach ($orders->products as $product) {
                 $sql = "INSERT INTO order_products (order_id, product_id, quantity, user_id) VALUES (:order_id, :product_id, :quantity, :user_id)";
                 $stmt = $conn->prepare($sql);
