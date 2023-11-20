@@ -12,7 +12,7 @@ switch ($method) {
 
         if (isset($_GET['rider_id'])) {
             $rider_id = $_GET['rider_id'];
-            $sql = "SELECT assigned_riders.rider_name, assigned_riders.order_id, assigned_riders.rider_id, assigned_riders.customer_name, assigned_riders.assigned_id, assigned_riders.date, order_details.phone, order_details.payment_type, order_details.delivery_address, GROUP_CONCAT(DISTINCT product.product_name) AS products FROM assigned_riders INNER JOIN order_details ON order_details.order_id = assigned_riders.order_id INNER JOIN order_products ON order_products.order_id = assigned_riders.order_id LEFT JOIN product ON product.product_id = order_products.product_id WHERE rider_id = :rider_id GROUP BY assigned_riders.order_id";
+            $sql = "SELECT   assigned_riders.order_id, assigned_riders.status, assigned_riders.rider_id, assigned_riders.customer_name, assigned_riders.assigned_id, assigned_riders.date, order_details.phone, order_details.payment_type, order_details.delivery_address, GROUP_CONCAT(DISTINCT product.product_name) AS products FROM assigned_riders INNER JOIN order_details ON order_details.order_id = assigned_riders.order_id INNER JOIN order_products ON order_products.order_id = assigned_riders.order_id LEFT JOIN product ON product.product_id = order_products.product_id WHERE rider_id = :rider_id GROUP BY assigned_riders.order_id";
         }
 
 
@@ -45,8 +45,8 @@ switch ($method) {
         $stmt->bindParam(':rider_name', $rider->rider_name);
 
 
-
         if ($stmt->execute()) {
+
             $response = [
                 "status" => "success",
                 "message" => "assigned_riders successfully"

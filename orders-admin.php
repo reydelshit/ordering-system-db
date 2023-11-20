@@ -20,25 +20,27 @@ switch ($method) {
         // ORDER BY orders.order_id ASC";
 
         $sql = "SELECT
-            orders.order_id,
-            orders.total_amount,
-            SUM(order_products.quantity) AS total_quantity,
-            orders.payment_type,
-            orders.user_id,
-            order_status.status,
-            order_status.status_id,
-            product_names.product_names,
-            orders.created_at
-            FROM orders
-            INNER JOIN order_products ON order_products.order_id = orders.order_id
-            INNER JOIN order_status ON order_status.order_id = orders.order_id
-            LEFT JOIN (
-                SELECT order_id, GROUP_CONCAT(product.product_name) AS product_names
-                FROM order_products
-                INNER JOIN product ON product.product_id = order_products.product_id
-                GROUP BY order_id
-            ) AS product_names ON product_names.order_id = orders.order_id
-            GROUP BY orders.order_id, orders.total_amount, orders.payment_type, orders.user_id";
+        orders.order_id,
+        orders.total_amount,
+        SUM(order_products.quantity) AS total_quantity,
+        orders.payment_type,
+        orders.user_id,
+        order_status.status,
+        order_status.status_id,
+        product_names.product_names,
+        orders.created_at,
+        proof.proof_image
+        FROM orders
+        INNER JOIN order_products ON order_products.order_id = orders.order_id
+        INNER JOIN order_status ON order_status.order_id = orders.order_id
+        LEFT JOIN proof ON proof.order_id = orders.order_id
+        LEFT JOIN (
+            SELECT order_id, GROUP_CONCAT(product.product_name) AS product_names
+            FROM order_products
+            INNER JOIN product ON product.product_id = order_products.product_id
+            GROUP BY order_id
+        ) AS product_names ON product_names.order_id = orders.order_id
+        GROUP BY orders.order_id, orders.total_amount, orders.payment_type, orders.user_id";
 
         if (isset($sql)) {
             $stmt = $conn->prepare($sql);
