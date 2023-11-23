@@ -45,7 +45,7 @@ switch ($method) {
         $message = json_decode(file_get_contents('php://input'));
         $sql = "INSERT INTO message (sender_id, receiver_id, message_context, created_at) VALUES (:sender_id, :receiver_id, :message_context, :created_at)";
         $stmt = $conn->prepare($sql);
-        $created_at = date('Y-m-d');
+        $created_at = date('Y-m-d H:i:s');
         $stmt->bindParam(':sender_id', $message->sender_id);
         $stmt->bindParam(':receiver_id', $message->receiver_id);
         $stmt->bindParam(':message_context', $message->message_context);
