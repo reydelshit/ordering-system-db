@@ -38,9 +38,10 @@ switch ($method) {
 
     case "POST":
         $user = json_decode(file_get_contents('php://input'));
-        $sql = "INSERT INTO users (user_id, name, email, password, gender, address, created_at) VALUES (null, :name, :email, :password, :gender, :address, :created_at)";
+        $sql = "INSERT INTO users (user_type, user_id, name, email, password, gender, address, created_at) VALUES (:user_type, null, :name, :email, :password, :gender, :address, :created_at)";
         $stmt = $conn->prepare($sql);
         $created_at = date('Y-m-d');
+        $stmt->bindParam(':user_type', $user->user_type);
         $stmt->bindParam(':name', $user->name);
         $stmt->bindParam(':email', $user->email);
         $stmt->bindParam(':password', $user->password);
