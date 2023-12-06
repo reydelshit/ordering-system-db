@@ -14,19 +14,19 @@ switch ($method) {
         $sender_id = $_GET['sender_id'];
 
         $sql = "SELECT 
-            users.profile_picture, 
-            message.message_customer_id, 
-            message.sender_id, 
-            message.receiver_id, 
-            message.message_context, 
-            message.created_at, 
-            users.name AS sender_username 
-        FROM 
-            message 
-        LEFT JOIN 
-            users ON users.user_id = message.sender_id 
-        WHERE 
-        ( message.receiver_id =  :receiver_id AND message.sender_id = :sender_id OR message.sender_id = :receiver_id AND message.receiver_id = :sender_id)";
+        (SELECT users.profile_picture FROM users WHERE users.user_id = :receiver_id) AS profile_picture,
+        message.message_customer_id, 
+        message.sender_id, 
+        message.receiver_id, 
+        message.message_context, 
+        message.created_at, 
+        users.name AS sender_username 
+    FROM 
+        message 
+    LEFT JOIN 
+        users ON users.user_id = message.sender_id 
+    WHERE 
+        ( message.receiver_id = :receiver_id AND message.sender_id = :sender_id OR message.sender_id = :receiver_id AND message.receiver_id = :sender_id)";
 
 
         if (isset($sql)) {
